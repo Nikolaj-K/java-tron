@@ -388,9 +388,6 @@ public class DepositImpl implements Deposit {
   public synchronized long addTokenBalance(byte[] address, byte[] tokenId, long value) {
     byte[] tokenIdWithoutLeadingZero = ByteUtil.stripLeadingZeroes(tokenId);
     AccountCapsule accountCapsule = getAccount(address);
-    if (accountCapsule == null) {
-      accountCapsule = createAccount(address, AccountType.Normal);
-    }
     long balance = accountCapsule.getAssetMap().getOrDefault(new String(tokenIdWithoutLeadingZero),new Long(0));
     if (value == 0) {
       return balance;
@@ -439,6 +436,9 @@ public class DepositImpl implements Deposit {
   @Override
   public synchronized long getTokenBalance(byte[] address, byte[] tokenId){
     AccountCapsule accountCapsule = getAccount(address);
+    if (accountCapsule == null) {
+      return 0;
+    }
     String tokenStr = new String(ByteUtil.stripLeadingZeroes(tokenId));
     return accountCapsule.getAssetMap().getOrDefault(tokenStr, 0L);
   }
